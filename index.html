@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hiker's Movie Database</title>
+    <link rel="stylesheet" href="styles.css" />
+    <!-- <link rel="stylesheet" href="slider.css" /> -->
+    <script
+      src="https://kit.fontawesome.com/01bc6e1eca.js"
+      crossorigin="anonymous"
+    ></script>
+    <script src="app.js" type="module"></script>
+    <!-- <script src="slider.js" defer></script> -->
+  </head>
+  <body>
+    <div class="" id="app">
+      <div>
+        <div class="header">
+          <div class="content-wrapper header_row_1">
+            <div class="navbar">
+              <div class="logo base_box">
+                <img src="/img/whitelogo.png" alt="hiker logo" class="logo" />
+              </div>
+              <div class="nav_link_set">
+                <a href="/" class="main_link">Home</a>
+                <a href="/" class="main_link">Find your movie</a>
+                <a href="#contact" class="btn-contact">Contact</a>
+              </div>
+              <div class="phone-nav"></div>
+            </div>
+          </div>
+          <form id="search_form" class="content-wrapper header_row_2">
+            <h1 class="main_title">Browse Our Movies</h1>
+            <div class="input_title">
+              <input
+                id="search_title"
+                class="text_input"
+                type="text"
+                placeholder="Search by Movie Title"
+              />
+              <div id="search_icon_1" class="search-wrapper">
+                <i class="fas fa-search"></i>
+              </div>
+            </div>
+            <div class="input_year">
+              <span class="number_label">Refine Search by Movie Year</span>
+              <div>
+                <input
+                  id="search_year"
+                  class="number_input"
+                  type="number"
+                  min="1920"
+                  max="2025"
+                  placeholder=""
+                  disabled
+                />
+              </div>
+              <div id="search_icon_2" class="search-wrapper">
+                <i class="fas fa-search"></i>
+              </div>
+            </div>
+          </form>
+          <div class="overlay"></div>
+        </div>
+        <section id="search" class="results">
+          <div class="md-progress-bar">
+            <div class="md-progress-bar"></div>
+            <div class="md-progress-bar"></div>
+            <div class="md-progress-bar"></div>
+          </div>
+          <div id="filter" class="results_intro">
+            <div class="results_box_1">
+              <h2 class="results_title">
+                <span>Search Results</span>
+              </h2>
+            </div>
+            <div class="filters">
+              <div class="genre">
+                <label class="label_text">Filter by Genre</label>
+                <select class="genre_select" id="filter_genre">
+                  <option value="">All</option>
+                  <option value="Action">Action</option>
+                  <option value="Drama">Drama</option>
+                </select>
+              </div>
+              <div>
+                <label class="awards_wrapper">
+                  <span class="awards label_text">Only Movies with Awards</span>
+                  <input
+                    class="awards_checkbox"
+                    type="checkbox"
+                    id="filter_awards"
+                  />
+                </label>
+              </div>
+            </div>
+            <!-- <div class="slider-wrapper"> -->
+            <!-- begin sliders -->
+            <!-- <div class="range_container">
+                  <div class="sliders_control">
+                    <input
+                      id="fromSlider"
+                      type="range"
+                      value="10"
+                      min="0"
+                      max="100"
+                    />
+                    <input
+                      id="toSlider"
+                      type="range"
+                      value="40"
+                      min="0"
+                      max="100"
+                    />
+                  </div>
+                  <div class="form_control">
+                    <div class="form_control_container">
+                      <div class="form_control_container__time">Min</div>
+                      <input
+                        class="form_control_container__time__input"
+                        type="number"
+                        id="fromInput"
+                        value="10"
+                        min="0"
+                        max="100"
+                      />
+                    </div>
+                    <div class="form_control_container">
+                      <div class="form_control_container__time">Max</div>
+                      <input
+                        class="form_control_container__time__input"
+                        type="number"
+                        id="toInput"
+                        value="40"
+                        min="0"
+                        max="100"
+                      />
+                    </div>
+                  </div>
+                </div> -->
+            <!-- end sliders -->
+            <!-- </div> -->
+          </div>
+          <div id="movie_list">
+            <div class="content-wrapper">
+              <div class="loading-state">
+                <spinnerPlaceholder></spinnerPlaceholder>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </body>
+</html>
