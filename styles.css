@@ -194,7 +194,7 @@ input#search_title {
 /*  HEADER -> BACKGROUND  */
 
 .background {
-  background-image: url(../img/movie_stars.jpg);
+  background-image: url(./img/movie_stars.jpg);
   background-repeat: no-repeat;
   background-position: 50%;
   background-size: cover;
