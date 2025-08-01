@@ -1,52 +1,23 @@
-// for now we have three import statements
 import { appState } from './state.js'
-import { loadMovies } from './api.js'
-import { renderMovies } from './ui.js'
+import { fetchMovies } from './api.js'
+import { saveMovies, saveSearchQuery } from './dataHandlers.js'
+import { renderUI, startLoading } from './ui.js'
 
 export function setupEventListeners(dispatch) {
-  //   document.getElementById('search_form').addEventListener('submit', (event) => {
-  //     event.preventDefault()
-  //     const searchQuery = document.getElementById('search_title').value
-  //     dispatch({ type: 'SET_SEARCH_QUERY', payload: searchQuery })
-  //     loadMovies(searchQuery, dispatch)
-  //   })
-
-  //   document
-  //     .getElementById('filter_genre')
-  //     .addEventListener('change', (event) => {
-  //       dispatch({
-  //         type: 'SET_FILTER',
-  //         payload: { key: 'genre', value: event.target.value },
-  //       })
-  //       renderMovies(appState)
-  //     })
-
-  //   document
-  //     .getElementById('filter_awards')
-  //     .addEventListener('change', (event) => {
-  //       dispatch({
-  //         type: 'SET_FILTER',
-  //         payload: { key: 'awards', value: event.target.checked },
-  //       })
-  //       renderMovies(appState)
-  //     })
-  // }
-
+  // "searchForm" is needed by by other event listeners
   const searchForm = document.getElementById('search_form')
-  const searchTitle = document.getElementById('search_title')
-  // const searchYear = document.getElementById('search_year')
-  const searchIcon_1 = document.getElementById('search_icon_1')
-  const searchIcon_2 = document.getElementById('search_icon_2')
 
   searchForm.addEventListener('submit', (event) => {
     event.preventDefault()
-    const searchQuery = document.getElementById('search_title').value
-    // dispatch({ type: 'SET_SEARCH_QUERY', payload: searchQuery })
-    // loadMovies(searchQuery, dispatch)
-    appState.searchQuery = searchQuery
-    // await loadMovies(searchQuery) // bad syntax
-    loadMovies(searchQuery) // might be ok
-    renderMovies() // Refresh UI after data is loaded
+    let query = event.target[0].value
+    appState.searchQuery = query
+    startLoading()
+    fetchMovies(query).then((movies) => {
+      saveMovies(movies)
+      saveSearchQuery(query)
+      renderUI()
+      stopLoading()
+    })
   })
 
   document
@@ -58,38 +29,48 @@ export function setupEventListeners(dispatch) {
       }
     })
 
-  // later add ability to add year to search
-  // searchYear.addEventListener
-
-  document.getElementById('search_icon_1').addEventListener('click', () => {
-    searchForm.dispatchEvent(new Event('submit'))
-  })
-
-  document.getElementById('search_icon_2').addEventListener('click', () => {
+  document.getElementById('search_icon').addEventListener('click', () => {
     searchForm.dispatchEvent(new Event('submit'))
   })
 
   document
     .getElementById('filter_genre')
     .addEventListener('change', (event) => {
-      // dispatch({
-      //   type: 'SET_FILTER',
-      //   payload: { key: 'genre', value: event.target.value },
-      // })
-      // renderMovies(appState)
       appState.filters.genre = event.target.value
-      renderMovies()
+      renderUI()
     })
 
   document
     .getElementById('filter_awards')
     .addEventListener('change', (event) => {
-      // dispatch({
-      //   type: 'SET_FILTER',
-      //   payload: { key: 'awards', value: event.target.checked },
-      // })
-      // renderMovies(appState)
       appState.filters.awards = event.target.checked
-      renderMovies()
+      renderUI()
     })
+
+  document.getElementById('sort_movies').addEventListener('change', (event) => {
+    appState.sort = event.target.value
+    appState.movies = sortMovies(appState.movies, appState.sort)
+    renderUI()
+  })
+}
+
+function sortMovies(movies, sortType) {
+  if (sortType === 'Default') return [...appState.originalMovies] // Reset to default order
+
+  return [...movies].sort((a, b) => {
+    switch (sortType) {
+      case 'Year':
+        return b.yearInt - a.yearInt // Newest first
+      case 'YearOld':
+        return a.yearInt - b.yearInt // Oldest first
+      case 'Rating':
+        return b.ratingInt - a.ratingInt // Highest rating first
+      case 'BoxOffice':
+        return b.boxOfficeInt - a.boxOfficeInt // Highest box office first
+      case 'Title':
+        return a.Title.localeCompare(b.Title)
+      default:
+        return 0
+    }
+  })
 }

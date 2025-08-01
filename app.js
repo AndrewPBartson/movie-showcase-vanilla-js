@@ -1,40 +1,52 @@
 import { appState } from './state.js'
-import { saveToLocalStorage, loadFromLocalStorage } from './utils.js'
-import { loadMovies, initializeSearchQuery } from './api.js'
-import { renderMovies } from './ui.js'
+import {
+  loadFromLocalStorage,
+  saveMovies,
+  saveSearchQuery,
+} from './dataHandlers.js'
+import { fetchMovies, initializeSearchQuery } from './api.js'
+import { renderUI, startLoading } from './ui.js'
 import { setupEventListeners } from './handlers.js'
 
-function main() {
-  let defaultSearch = 'new'
+async function main() {
+  try {
+    startLoading()
 
-  // Load previous movies from localStorage, if any
-  const savedMovies = loadFromLocalStorage('movies') || []
-  console.log('savedMovies', savedMovies)
+    const savedMovies = loadFromLocalStorage('movies') || []
+    const savedQuery = loadFromLocalStorage('searchQuery') || ''
 
-  if (savedMovies.length > 0) {
-    // dispatch({ type: 'SET_MOVIES', payload: savedMovies })
-    appState.movies = savedMovies
-    renderMovies()
-  } else {
-    initializeSearchQuery()
-      .then(() => {
-        return loadMovies(appState.searchQuery)
-      })
-      .then((data) => {
-        saveToLocalStorage('movies', data)
-        appState.movies = data
-        console.log('data', data)
-        renderMovies()
-      })
-      .catch((error) => {
-        console.error('Error getting user region:', error)
-        return loadMovies(defaultSearch) // Fallback in case of error
-      })
+    if (savedQuery.length > 0) {
+      saveSearchQuery(savedQuery)
+    } else {
+      saveSearchQuery(appState.defaultSearch)
+    }
+
+    if (savedMovies.length > 0) {
+      appState.movies = savedMovies
+      renderUI()
+    } else {
+
+      initializeSearchQuery()
+        .then((searchQuery) => {
+          saveSearchQuery(searchQuery)
+          startLoading()
+          fetchMovies(appState.searchQuery).then((movies) => {
+            saveMovies(movies)
+            renderUI()
+          })
+        })
+        .catch((err) => {
+          console.error(err)
+        })
+    }
+
+    setupEventListeners()
+
+    const progressBar = document.querySelector('.progress-bar')
+    progressBar.style.animation = 'none'
+  } catch (error) {
+    console.error('Error initializing app:', error)
   }
-
-  // Set up event listeners
-  setupEventListeners()
-  // setupEventListeners(dispatch)
 }
 
 document.addEventListener('DOMContentLoaded', main)
